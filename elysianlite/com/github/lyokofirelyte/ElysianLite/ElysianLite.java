@@ -116,6 +116,7 @@ public class ElysianLite extends JavaPlugin implements Listener {
 		}
 	}
 	
+	@SneakyThrows
 	@EventHandler
 	public void onLeave(PlayerQuitEvent e){
 		
@@ -124,6 +125,10 @@ public class ElysianLite extends JavaPlugin implements Listener {
 		for (Player p : Bukkit.getOnlinePlayers()){
 			sendMessage(p, new String[]{"&c" + e.getPlayer().getDisplayName() + " has fled!"});
 		}
+		
+		FileWriter file = new FileWriter("./plugins/ElysianLite/players/" + e.getPlayer().getUniqueId().toString() + ".json");
+		file.write(playerData.get(e.getPlayer().getUniqueId().toString()).toJSONString());
+		file.close();
 	}
 	
 	@Override

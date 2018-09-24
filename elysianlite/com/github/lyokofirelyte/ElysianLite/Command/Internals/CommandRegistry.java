@@ -55,7 +55,7 @@ public class CommandRegistry implements CommandExecutor {
 						command.setUsage(anno.help());
 						command.setAliases(Arrays.asList(anno.commands()));
 						command.setDescription(anno.desc());
-						scm.register("emp", command);
+						scm.register("ely", command);
 						command.setExecutor(this);
 						main.commandMap.put(Arrays.asList(anno.commands()), obj);
 					} catch (Exception e) {

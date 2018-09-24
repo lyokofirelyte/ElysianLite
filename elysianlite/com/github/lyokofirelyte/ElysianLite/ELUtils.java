@@ -3,12 +3,6 @@ package com.github.lyokofirelyte.ElysianLite;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-import org.bukkit.entity.Player;
-
-import net.minecraft.server.v1_12_R1.IChatBaseComponent;
-import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_12_R1.PacketPlayOutChat;
 
 public class ELUtils {
 
@@ -41,12 +35,6 @@ public class ELUtils {
 			l.getYaw() + " " +
 			l.getPitch()
 		);
-	}
-	
-	public static void updateDisplayBar(Player p, String msg){
-		IChatBaseComponent cbc = ChatSerializer.a("{\"text\": \"" + AS(msg) + "\"}");
-		PacketPlayOutChat chat = new PacketPlayOutChat(cbc);
-		((CraftPlayer) p).getHandle().playerConnection.sendPacket(chat);
 	}
 	
 	public static String AS(String msg){

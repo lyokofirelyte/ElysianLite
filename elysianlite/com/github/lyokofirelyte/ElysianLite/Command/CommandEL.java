@@ -23,7 +23,7 @@ public class CommandEL implements Listener, AutoRegister<CommandEL> {
 	}
 
 	@ELCommand(commands = {"el", "help", "elysian", "elysianlite"}, perm = "el.command", help = "/el")
-	public void onWub(String[] args, Player p){
+	public void onEly(String[] args, Player p){
 		main.sendMessage(p, "&6Showing all commands&f:");
 		main.sendMessage(p, "&f-------------------------");
 		for (Object o : main.getCommands()){
