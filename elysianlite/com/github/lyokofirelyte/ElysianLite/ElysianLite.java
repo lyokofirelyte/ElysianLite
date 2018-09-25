@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -28,9 +30,6 @@ import com.github.lyokofirelyte.ElysianLite.Data.ELObject;
 import lombok.SneakyThrows;
 
 public class ElysianLite extends JavaPlugin implements Listener {
-	private List<Object> commands = new ArrayList<>();
-	private List<Object> listeners = new ArrayList<>();
-	
 	public Map<String, Object> clazzez = new HashMap<>();
 	public Map<String, ELObject> playerData = new HashMap<>();
 	public Map<List<String>, Object> commandMap = new HashMap<>();
@@ -46,31 +45,11 @@ public class ElysianLite extends JavaPlugin implements Listener {
 		reg = new CommandRegistry(this);
 		reg.registerAll(this, "ElysianLite", "ElysianLite-1.0.jar");
 		
-		
 		for (Player p : Bukkit.getOnlinePlayers()){
 			motd(p);
 		}
 		
 		Bukkit.getLogger().log(Level.INFO, "Online.");
-	}
-	
-	@SneakyThrows
-	private void registerListeners(Class<?>... clazzez){
-		for (Class<?> clazz : clazzez){
-			Object o = clazz.getConstructor(ElysianLite.class).newInstance(this);
-			if (o instanceof Listener){
-				Bukkit.getPluginManager().registerEvents((Listener) o, this);
-				listeners.add(o);
-			}
-		}
-	}
-	
-	@SneakyThrows
-	private void registerClasses(Class<?>... clazzez){
-		for (Class<?> clazz : clazzez){
-			commands.add(clazz.getConstructor(ElysianLite.class).newInstance(this));
-		}
-		reg.registerCommands(commands);
 	}
 
 	@SneakyThrows
@@ -106,14 +85,18 @@ public class ElysianLite extends JavaPlugin implements Listener {
 			playerData.put(e.getPlayer().getUniqueId().toString(), new ELObject());
 		}
 		
-		if (!ELData.DISPLAY_NAME.getData(e.getPlayer(), this).asString().equals("none")){
-			e.getPlayer().setDisplayName(ELData.DISPLAY_NAME.getData(e.getPlayer(), this).asString());
-			e.getPlayer().setPlayerListName(e.getPlayer().getDisplayName());
+		if (ELData.DISPLAY_NAME.getData(e.getPlayer(), this).asString().equals("none")){
+			ELData.DISPLAY_NAME.setData(e.getPlayer(), "&7" + e.getPlayer().getName(), this);
 		}
+
+		e.getPlayer().setDisplayName(ELData.DISPLAY_NAME.getData(e.getPlayer(), this).asString());
+		e.getPlayer().setPlayerListName(ChatColor.stripColor((e.getPlayer().getDisplayName())));
 		
 		for (Player p : Bukkit.getOnlinePlayers()){
 			sendMessage(p, new String[]{"&a" + e.getPlayer().getDisplayName() + " has arrived!"});
 		}
+		
+		motd(e.getPlayer());
 	}
 	
 	@SneakyThrows
@@ -182,7 +165,7 @@ public class ElysianLite extends JavaPlugin implements Listener {
 		return ChatColor.translateAlternateColorCodes('&', message);
 	}
 	
-	public List<Object> getCommands(){
-		return commands;
+	public Set<List<String>> getCommands(){
+		return commandMap.keySet();
 	}
 }

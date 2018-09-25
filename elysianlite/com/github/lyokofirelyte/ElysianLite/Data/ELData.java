@@ -71,6 +71,9 @@ public enum ELData {
 	
 	public List<String> asListString(){
 		try {
+			if (a.equals("none")) {
+				return new ArrayList<String>();
+			}
 			JSONArray array = (JSONArray) a;
 			List<String> toReturn = new ArrayList<String>();
 			for (Object o : array){

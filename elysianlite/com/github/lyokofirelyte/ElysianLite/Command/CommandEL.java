@@ -1,6 +1,7 @@
 package com.github.lyokofirelyte.ElysianLite.Command;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -23,10 +24,11 @@ public class CommandEL implements Listener, AutoRegister<CommandEL> {
 	}
 
 	@ELCommand(commands = {"el", "help", "elysian", "elysianlite"}, perm = "el.command", help = "/el")
-	public void onEly(String[] args, Player p){
+	public void onEly(Player p, String[] args){
 		main.sendMessage(p, "&6Showing all commands&f:");
 		main.sendMessage(p, "&f-------------------------");
-		for (Object o : main.getCommands()){
+		for (List<String> oa : main.getCommands()){
+			Object o = main.commandMap.get(oa);
 			for (Method m : o.getClass().getMethods()){
 				if (m.getAnnotation(ELCommand.class) != null){
 					ELCommand c = m.getAnnotation(ELCommand.class);

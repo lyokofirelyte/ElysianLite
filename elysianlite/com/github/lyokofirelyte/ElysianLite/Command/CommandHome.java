@@ -26,7 +26,7 @@ public class CommandHome implements Listener, AutoRegister<CommandHome> {
 	}
 
 	@ELCommand(commands = {"home", "h"}, desc = "Return home command", help = "/home")
-	public void onHome(String[] args, Player p){
+	public void onHome(Player p, String[] args){
 		List<String> homes = ELData.HOMES.getData(p, main).asListString();
 		String home = "";
 		String possibleRemove = "";
@@ -69,7 +69,7 @@ public class CommandHome implements Listener, AutoRegister<CommandHome> {
 	}
 	
 	@ELCommand(commands = {"sethome"}, desc = "Set home command", help = "/sethome <name>")
-	public void onSetHome(String[] args, Player p){
+	public void onSetHome(Player p, String[] args){
 		Location l = p.getLocation();
 		List<String> homes = ELData.HOMES.getData(p, main).asListString();
 		if (homes.size() < getMaxHomes(p)){
@@ -82,7 +82,7 @@ public class CommandHome implements Listener, AutoRegister<CommandHome> {
 	}
 	
 	@ELCommand(commands = {"remhome", "delhome", "removehome", "deletehome"}, desc = "Remove home command", help = "/remhome <name>")
-	public void onRemHome(String[] args, Player p){
+	public void onRemHome(Player p, String[] args){
 		if (args.length > 0){
 			List<String> homes = ELData.HOMES.getData(p, main).asListString();
 			String toRemove = "";
