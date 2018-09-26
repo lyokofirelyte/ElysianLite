@@ -55,7 +55,7 @@ public class CommandRegistry implements CommandExecutor {
 						command.setUsage(anno.help());
 						command.setAliases(Arrays.asList(anno.commands()));
 						command.setDescription(anno.desc());
-						scm.register("ely", command);
+						scm.register("el", command);
 						command.setExecutor(this);
 						main.commandMap.put(Arrays.asList(anno.commands()), obj);
 					} catch (Exception e) {
@@ -86,7 +86,7 @@ public class CommandRegistry implements CommandExecutor {
     						if (m.getAnnotation(ELCommand.class) != null && Arrays.asList(m.getAnnotation(ELCommand.class).commands()).contains(command)){
     							try {
     								ELCommand anno = m.getAnnotation(ELCommand.class);
-    								if ((sender instanceof Player && ELData.PERMS.getData((Player) sender, main).asListString().contains(anno.perm())) || sender instanceof Player == false || sender.isOp() || anno.perm().equals("el.command") || anno.perm().equals("wa.guest")){
+    								if ((sender instanceof Player && (ELData.PERMS.getData((Player) sender, main).asListString().contains(anno.perm())) || sender instanceof Player == false || sender.isOp() || anno.perm().equals("el.command") || anno.perm().equals("wa.guest"))){
     									if (args.length > anno.max() || args.length < anno.min()){
     										s(sender, anno.help());
     										return true;
@@ -94,34 +94,18 @@ public class CommandRegistry implements CommandExecutor {
     									if (sender instanceof Player == false){
     										s(sender, "&4Console can't run this!");
     									} else { // epilepsy warning
-    										if (anno.commands()[0].equals("none")){
-	    										if (m.getParameterTypes()[0].equals(Player.class)){
-	    											if (m.getParameterTypes()[1].equals(ELObject.class)){
-	    												m.invoke(obj, (Player) sender, gp, args);
-	    											} else {
-	    												m.invoke(obj, (Player) sender, args);
-	    											}
-	    										} else if (m.getParameterTypes()[0].equals(CommandSender.class)){
-	    											if (m.getParameterTypes()[1].equals(ELObject.class)){
-	    												m.invoke(obj, sender, gp, args);
-	    											} else {
-	    												m.invoke(obj, sender, args);
-	    											}
-	    										}
-    										} else {
-	    										if (m.getParameterTypes()[0].equals(Player.class)){
-	    											if (m.getParameterTypes()[1].equals(ELObject.class)){
-	    												m.invoke(obj, (Player) sender, gp, args, label);
-	    											} else {
-	    												m.invoke(obj, (Player) sender, args, label);
-	    											}
-	    										} else if (m.getParameterTypes()[0].equals(CommandSender.class)){
-	    											if (m.getParameterTypes()[1].equals(ELObject.class)){
-	    												m.invoke(obj, sender, gp, args, label);
-	    											} else {
-	    												m.invoke(obj, sender, args, label);
-	    											}
-	    										}
+    										if (m.getParameterTypes()[0].equals(Player.class)){
+    											if (m.getParameterTypes()[1].equals(ELObject.class)){
+    												m.invoke(obj, (Player) sender, gp, args);
+    											} else {
+    												m.invoke(obj, (Player) sender, args);
+    											}
+    										} else if (m.getParameterTypes()[0].equals(CommandSender.class)){
+    											if (m.getParameterTypes()[1].equals(ELObject.class)){
+    												m.invoke(obj, sender, gp, args);
+    											} else {
+    												m.invoke(obj, sender, args);
+    											}
     										}
     									}
     								} else if (!sender.hasPermission(anno.perm())){
@@ -199,7 +183,7 @@ public class CommandRegistry implements CommandExecutor {
 				} catch (Exception e){}
 			}
 			
-			if (obj instanceof AutoRegister && !clazz.toString().contains("\\$") && !main.clazzez.containsKey(clazz.toString())){
+			if (obj instanceof AutoRegister<?> && !clazz.toString().contains("\\$") && !main.clazzez.containsKey(clazz.toString())){
 				main.clazzez.put(clazz.toString(), (AutoRegister<?>) obj);
 				curr.add((AutoRegister<?>) obj);
 			}

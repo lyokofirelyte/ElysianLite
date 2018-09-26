@@ -22,7 +22,7 @@ public class CommandNick implements AutoRegister<CommandNick> {
 	}
 
 	@ELCommand(commands = {"nick"}, help = "/nick <name>", desc = "Change your name!")
-	public void onNick(String[] args, Player p){
+	public void onNick(Player p, String[] args){
 		if (args.length > 0){
 			if (args[0].toLowerCase().startsWith(p.getName().toLowerCase().substring(0, 3))){
 				main.broadcast("&7" + p.getDisplayName() + " &6-> &7" + args[0]);
