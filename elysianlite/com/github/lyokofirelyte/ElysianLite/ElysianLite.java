@@ -11,6 +11,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -100,19 +101,37 @@ public class ElysianLite extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e){
 		
+		Player p = e.getPlayer();
 		e.setJoinMessage(null);
 		
-		if (!playerData.containsKey(e.getPlayer().getUniqueId().toString())){
-			playerData.put(e.getPlayer().getUniqueId().toString(), new ELObject());
+		if (!playerData.containsKey(p.getUniqueId().toString())){
+			playerData.put(p.getUniqueId().toString(), new ELObject());
 		}
 		
-		if (!ELData.DISPLAY_NAME.getData(e.getPlayer(), this).asString().equals("none")){
-			e.getPlayer().setDisplayName(ELData.DISPLAY_NAME.getData(e.getPlayer(), this).asString());
-			e.getPlayer().setPlayerListName(e.getPlayer().getDisplayName());
+		if (!ELData.DISPLAY_NAME.getData(p, this).asString().equals("none")){
+			p.setDisplayName(ELData.DISPLAY_NAME.getData(p, this).asString());
+			p.setPlayerListName(p.getDisplayName());
 		}
 		
-		for (Player p : Bukkit.getOnlinePlayers()){
-			sendMessage(p, new String[]{"&a" + e.getPlayer().getDisplayName() + " has arrived!"});
+		for (Player z : Bukkit.getOnlinePlayers()){
+			sendMessage(z, new String[]{"&a" + p.getDisplayName() + " has arrived!"});
+		}
+		
+		switch (p.getWorld().getName()){
+			case "Creative":
+				e.getPlayer().setGameMode(GameMode.CREATIVE);
+				break;
+			case "world": case "world_the_end": case "world_nether":
+				p.setGameMode(GameMode.SURVIVAL);
+				p.setAllowFlight(false);
+				p.setFlying(false);
+				break;
+			default:
+				p.setGameMode(GameMode.ADVENTURE);
+				p.setAllowFlight(true);
+				p.setFlying(true);
+				p.setFlySpeed(10);
+				break;
 		}
 	}
 	
