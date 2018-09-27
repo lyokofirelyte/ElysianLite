@@ -13,9 +13,13 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.github.lyokofirelyte.ElysianLite.Command.CommandWorld;
 import com.github.lyokofirelyte.ElysianLite.Command.Internals.CommandRegistry;
 import com.github.lyokofirelyte.ElysianLite.Data.ELData;
 import com.github.lyokofirelyte.ElysianLite.Data.ELObject;
@@ -49,7 +54,32 @@ public class ElysianLite extends JavaPlugin implements Listener {
 			motd(p);
 		}
 		
-		Bukkit.getLogger().log(Level.INFO, "Online.");
+		Bukkit.getLogger().log(Level.INFO, "Online. Loading extra worlds...");
+		int errors = 0;
+		
+		for (String world : CommandWorld.worlds){
+			if (new File("./" + world).exists()){
+				try {
+					new WorldCreator(world).environment(World.Environment.NORMAL).createWorld();
+				} catch (Exception e){
+					e.printStackTrace();
+					errors++;
+				}
+			}
+		}
+		
+		Bukkit.getLogger().log(Level.INFO, "Done. Encountered " + errors + " error(s).");
+	}
+	
+	@EventHandler
+	public void onPreProcess(PlayerCommandPreprocessEvent e){
+		if (e.getMessage().startsWith("//") || e.getMessage().startsWith("///") || e.getMessage().startsWith("////")){
+			if (!e.getPlayer().getWorld().getName().equals("Creative")){
+				e.setCancelled(true);
+				sendMessage(e.getPlayer(), "Please move to the creative world to use this command.");
+				return;
+			}
+		}
 	}
 
 	@SneakyThrows
@@ -79,24 +109,42 @@ public class ElysianLite extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e){
 		
+		Player p = e.getPlayer();
 		e.setJoinMessage(null);
 		
-		if (!playerData.containsKey(e.getPlayer().getUniqueId().toString())){
-			playerData.put(e.getPlayer().getUniqueId().toString(), new ELObject());
+		if (!playerData.containsKey(p.getUniqueId().toString())){
+			playerData.put(p.getUniqueId().toString(), new ELObject());
 		}
 		
-		if (ELData.DISPLAY_NAME.getData(e.getPlayer(), this).asString().equals("none")){
-			ELData.DISPLAY_NAME.setData(e.getPlayer(), "&7" + e.getPlayer().getName(), this);
+		if (ELData.DISPLAY_NAME.getData(p, this).asString().equals("none")){
+			ELData.DISPLAY_NAME.setData(p, "&7" + e.getPlayer().getName(), this);
 		}
 
-		e.getPlayer().setDisplayName(ELData.DISPLAY_NAME.getData(e.getPlayer(), this).asString());
-		e.getPlayer().setPlayerListName(ChatColor.stripColor((e.getPlayer().getDisplayName())));
+		p.setDisplayName(ELData.DISPLAY_NAME.getData(e.getPlayer(), this).asString());
+		p.setPlayerListName(ChatColor.stripColor((e.getPlayer().getDisplayName())));
 		
-		for (Player p : Bukkit.getOnlinePlayers()){
-			sendMessage(p, new String[]{"&a" + e.getPlayer().getDisplayName() + " has arrived!"});
+		for (Player z : Bukkit.getOnlinePlayers()){
+			sendMessage(z, new String[]{"&a" + p.getDisplayName() + " has arrived!"});
 		}
 		
-		motd(e.getPlayer());
+		switch (p.getWorld().getName()){
+			case "Creative":
+				e.getPlayer().setGameMode(GameMode.CREATIVE);
+				break;
+			case "world": case "world_the_end": case "world_nether":
+				p.setGameMode(GameMode.SURVIVAL);
+				p.setAllowFlight(false);
+				p.setFlying(false);
+				break;
+			default:
+				p.setGameMode(GameMode.ADVENTURE);
+				p.setAllowFlight(true);
+				p.setFlying(true);
+				p.setFlySpeed(10);
+				break;
+		}
+		
+		motd(p);
 	}
 	
 	@SneakyThrows
@@ -119,6 +167,12 @@ public class ElysianLite extends JavaPlugin implements Listener {
 		Bukkit.getLogger().log(Level.INFO, "Saving...");
 		save();
 		Bukkit.getLogger().log(Level.INFO, "Done.");
+	}
+	
+	public void broadcast(String message){
+		for (Player p : Bukkit.getOnlinePlayers()){
+			sendMessage(p, new String[]{message});
+		}
 	}
 	
 	@SneakyThrows
@@ -144,7 +198,7 @@ public class ElysianLite extends JavaPlugin implements Listener {
 	
 	public void motd(Player p){
 		sendMessage(p, new String[]{
-			"&2Welcome! We're running &bElysian Lite v1.0.",
+			"&2Welcome! We're running &bElysian Lite v1.1. &6[ 9.26.18 ]",
 			"&2Type &3/el &2for a list of commands!"
 		});
 	}

@@ -17,12 +17,12 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/lyoko/Desktop/lombok.jar"/>
-	<classpathentry kind="lib" path="C:/Users/lyoko/Desktop/spigot-1.13.1.jar"/>
 	<classpathentry kind="src" output="target/classes" path="src">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/lyoko/Desktop/spigot-1.13.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
