@@ -50,6 +50,7 @@ public class CommandHome implements Listener, AutoRegister<CommandHome> {
 							String[] spl = homez.split(" ");
 							Location homeLoc = new Location(Bukkit.getWorld(spl[0]), toInt(spl[1]), toInt(spl[2]), toInt(spl[3]), toFloat(spl[4]), toFloat(spl[5]));
 							p.teleport(homeLoc);
+							
 							//main.addCooldown(p, "home", 60 * 1000L);
 							return;
 						}
