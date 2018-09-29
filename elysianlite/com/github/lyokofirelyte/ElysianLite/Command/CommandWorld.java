@@ -1,10 +1,13 @@
 package com.github.lyokofirelyte.ElysianLite.Command;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.github.lyokofirelyte.ElysianLite.ElysianLite;
 import com.github.lyokofirelyte.ElysianLite.Command.Internals.AutoRegister;
@@ -23,6 +26,15 @@ public class CommandWorld implements AutoRegister<CommandWorld> {
 	
 	public CommandWorld(ElysianLite w){
 		main = w;
+	}
+	
+	public boolean isInventoryEmpty(Player p) {
+		for (ItemStack i : p.getInventory().getContents()) {
+			if (i != null && !i.getType().equals(Material.AIR)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	@ELCommand(commands = {"spawn"}, help = "/spawn", desc = "Teleport to Spawn")
@@ -56,9 +68,12 @@ public class CommandWorld implements AutoRegister<CommandWorld> {
 				case "creative":
 					if (p.getWorld().getName().equals("Creative")) {
 						main.sendMessage(p, "You're already on that world.");
-					} else {
+					} else if (isInventoryEmpty(p)) {
 						p.teleport(new Location(Bukkit.getWorld("Creative"), 100, 100, 100));
+						p.setGameMode(GameMode.CREATIVE);
 						main.broadcast("&7" + p.getDisplayName() + " &6-> &3world transfer &6-> &b" + "Creative");
+					} else {
+						main.sendMessage(p, "You must have an empty inventory.");
 					}
 					break;
 					
@@ -66,7 +81,13 @@ public class CommandWorld implements AutoRegister<CommandWorld> {
 					if (p.getWorld().getName().equals("world")) {
 						main.sendMessage(p, "You're already on that world.");
 					} else {
-						p.teleport(new Location(Bukkit.getWorld("world"), 1000, 100, 1000));
+						p.getInventory().clear();
+						p.teleport(new Location(Bukkit.getWorld("world"), -182, 200, -84));
+						p.setGameMode(GameMode.SURVIVAL);
+						p.setInvulnerable(true);
+						Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
+							p.setInvulnerable(false);
+						}, 200);
 						main.broadcast("&7" + p.getDisplayName() + " &6-> &3world transfer &6-> &b" + "Survival");
 					}
 					break;

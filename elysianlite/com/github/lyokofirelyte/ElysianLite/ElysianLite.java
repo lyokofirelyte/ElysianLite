@@ -113,6 +113,7 @@ public class ElysianLite extends JavaPlugin implements Listener {
 	public void onJoin(PlayerJoinEvent e){
 		
 		Player p = e.getPlayer();
+		p.setInvulnerable(false);
 		e.setJoinMessage(null);
 		
 		if (!playerData.containsKey(p.getUniqueId().toString())){
