@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
@@ -27,6 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.github.lyokofirelyte.ElysianLite.Command.CommandHome;
 import com.github.lyokofirelyte.ElysianLite.Command.CommandWorld;
 import com.github.lyokofirelyte.ElysianLite.Command.Internals.CommandRegistry;
 import com.github.lyokofirelyte.ElysianLite.Data.ELData;
@@ -37,6 +39,7 @@ import lombok.SneakyThrows;
 public class ElysianLite extends JavaPlugin implements Listener {
 	public Map<String, Object> clazzez = new HashMap<>();
 	public Map<String, ELObject> playerData = new HashMap<>();
+	public Map<String, Integer> tasks = new HashMap<>();
 	public Map<List<String>, Object> commandMap = new HashMap<>();
 	
 	private CommandRegistry reg;
@@ -106,7 +109,7 @@ public class ElysianLite extends JavaPlugin implements Listener {
 		}
 	}
 	
-	@EventHandler
+	@EventHandler @SneakyThrows
 	public void onJoin(PlayerJoinEvent e){
 		
 		Player p = e.getPlayer();
@@ -145,6 +148,24 @@ public class ElysianLite extends JavaPlugin implements Listener {
 		}
 		
 		motd(p);
+		
+		if (ELData.IS_TELEPORTING_HOME.getData(p, this).asBool()) {
+			List<String> homes = ELData.HOMES.getData(p, this).asListString();
+			if (homes.size() > 0){
+				String[] spl = homes.get(0).split(" ");
+				Location homeLoc = new Location(Bukkit.getWorld(spl[0]), toInt(spl[1]), toInt(spl[2]), toInt(spl[3]), toFloat(spl[4]), toFloat(spl[5]));
+				p.teleport(homeLoc);
+				ELData.IS_TELEPORTING_HOME.setData(p, false, this);
+			}
+		}
+	}
+	
+	private int toInt(String i){
+		return Integer.parseInt(i);
+	}
+	
+	private float toFloat(String i) {
+		return Float.parseFloat(i);
 	}
 	
 	@SneakyThrows
@@ -155,6 +176,7 @@ public class ElysianLite extends JavaPlugin implements Listener {
 		
 		for (Player p : Bukkit.getOnlinePlayers()){
 			sendMessage(p, new String[]{"&c" + e.getPlayer().getDisplayName() + " has fled!"});
+			tasks.remove(p.getUniqueId().toString());
 		}
 		
 		FileWriter file = new FileWriter("./plugins/ElysianLite/players/" + e.getPlayer().getUniqueId().toString() + ".json");

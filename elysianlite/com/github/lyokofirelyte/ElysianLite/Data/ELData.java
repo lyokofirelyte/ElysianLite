@@ -13,6 +13,7 @@ public enum ELData {
 	HOMES("HOMES"),
 	PERMS("PERMS"),
 	NAME("NAME"),
+	IS_TELEPORTING_HOME("IS_TELEPORTING_HOME"),
 	DISPLAY_NAME("DISPLAY_NAME");
 	
 	ELData(String name){
