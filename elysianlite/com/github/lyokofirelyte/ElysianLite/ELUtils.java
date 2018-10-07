@@ -18,14 +18,14 @@ public class ELUtils {
 	
 	public static void specialEffects(Location ll, Material m, ElysianLite main){
 		
-		final List<Location> circleblocks = circle(ll, 5, 2, true, false, 0);
+		final List<Location> circleblocks = circle(ll, 3, 2, true, false, 0);
 		
 		for (Location l : circleblocks){
 			 l.getWorld().playEffect(l, Effect.SMOKE, 0);
 			 l.getWorld().playEffect(l, Effect.ENDER_SIGNAL, 0);
 		}
 		
-		deployFirework(ll, Color.AQUA, Type.BALL_LARGE, true, true);
+		//deployFirework(ll, Color.AQUA, Type.BALL_LARGE, true, true);
 	}
 	
 	public static void deployFirework(Location l, Color color, Type type, boolean trail, boolean flicker){

@@ -3,6 +3,7 @@ package com.github.lyokofirelyte.ElysianLite.Event;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,7 +29,9 @@ public class EventChat implements Listener, AutoRegister<EventChat> {
 	public void onChat(AsyncPlayerChatEvent e){
 		e.setCancelled(true);
 		Player p = e.getPlayer();
+		Location l = p.getLocation();
 		e.setMessage(ChatColor.stripColor(main.AS(e.getMessage())));
+		e.setMessage(e.getMessage().replace("%c", "&6" + l.getWorld().getName() + " &f@&6 " + l.getBlockX() + "&f, &6" + l.getBlockY() + "&f, &6" + l.getBlockZ() + "&f"));
 		
 		boolean official = e.getMessage().startsWith("@");
 		String rankColor = official || p.getGameMode().equals(GameMode.CREATIVE) ? "&b" : "&7";
