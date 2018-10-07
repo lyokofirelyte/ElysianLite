@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,7 @@ import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -28,7 +28,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.github.lyokofirelyte.ElysianLite.Command.CommandHome;
 import com.github.lyokofirelyte.ElysianLite.Command.CommandWorld;
 import com.github.lyokofirelyte.ElysianLite.Command.Internals.CommandRegistry;
 import com.github.lyokofirelyte.ElysianLite.Data.ELData;
@@ -41,8 +40,18 @@ public class ElysianLite extends JavaPlugin implements Listener {
 	public Map<String, ELObject> playerData = new HashMap<>();
 	public Map<String, Integer> tasks = new HashMap<>();
 	public Map<List<String>, Object> commandMap = new HashMap<>();
+	public List<String> gliding = new ArrayList<String>();
 	
 	private CommandRegistry reg;
+	
+	@EventHandler
+	public void onGlide(EntityToggleGlideEvent  e) {
+		if (e.getEntity() instanceof Player) {
+			if (gliding.contains(e.getEntity().getUniqueId().toString())){
+				e.setCancelled(true);
+			}
+		}
+	}
 
 	@Override
 	public void onEnable(){

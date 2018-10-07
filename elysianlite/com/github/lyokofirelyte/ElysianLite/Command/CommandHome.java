@@ -98,11 +98,9 @@ public class CommandHome implements AutoRegister<CommandHome> {
 		if (homes.size() > 0){
 			String[] spl = homes.get(0).split(" ");
 			Location homeLoc = new Location(Bukkit.getWorld(spl[0]), toInt(spl[1]), toInt(spl[2]), toInt(spl[3]), toFloat(spl[4]), toFloat(spl[5]));
-			if (!homeLoc.getWorld().getName().equals(p.getWorld().getName())) {
-				p.teleport(homeLoc);
-			} else {
-				this.calculate(p, p.getLocation(), homeLoc);
-			}
+			p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 5));
+			p.teleport(homeLoc);
+			ELUtils.specialEffects(homeLoc, Material.NETHER_BRICK, main);
 		} else {
 			main.sendMessage(p, "&c&oYou're homeless.");
 		}

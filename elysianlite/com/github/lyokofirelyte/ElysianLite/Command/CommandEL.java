@@ -38,5 +38,6 @@ public class CommandEL implements AutoRegister<CommandEL> {
 				}
 			}
 		}
+		shown.clear();
 	}
 }
